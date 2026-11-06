@@ -885,7 +885,7 @@ main > section { z-index: 1; }
   gap: 14px;
   animation: playerIn 0.55s var(--ease) both;
 }
-.player.is-vertical .player-box { width: min(400px, 100%, calc((100svh - 160px) * 9 / 16)); }
+.player.is-vertical .player-box { width: min(640px, 100%, calc((100svh - 140px) * 9 / 16)); }
 .player-bar { display: flex; align-items: center; gap: 18px; font-size: 10px; }
 .player-bar #pl-code { color: var(--mute); }
 .player-bar #pl-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
