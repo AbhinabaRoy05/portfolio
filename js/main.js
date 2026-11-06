@@ -397,7 +397,9 @@
   function renderPortrait() {
     if (!data.portrait) return;
     const m = $("#portrait-media");
-    m.innerHTML = `<img src="${esc(data.portrait)}" alt="Portrait of ${esc(data.name || "Abhinaba Roy")}" loading="lazy">`;
+    // Swap the placeholder for the photo, keeping the corner brackets on top of it.
+    $$(".ph-cross, .ph-label", m).forEach(el => el.remove());
+    m.insertAdjacentHTML("afterbegin", `<img src="${esc(data.portrait)}" alt="Portrait of ${esc(data.name || "Abhinaba Roy")}" width="960" height="1200" loading="lazy" decoding="async">`);
   }
 
   function intro() {
