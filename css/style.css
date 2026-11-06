@@ -51,6 +51,7 @@ body::after {
   background-size: 220px;
   opacity: 0.075;
   animation: grain 0.9s steps(4) infinite;
+  will-change: transform;
 }
 
 @keyframes grain {

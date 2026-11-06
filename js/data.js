@@ -6,15 +6,15 @@ window.PORTFOLIO = {
   portrait: "",
 
   tools: [
-    { name: "After Effects", mark: "Ae", icon: "assets/icons/after-effects.svg" },
-    { name: "Premiere Pro", mark: "Pr", icon: "assets/icons/premiere-pro.svg" },
-    { name: "Photoshop", mark: "Ps", icon: "assets/icons/photoshop.svg" },
-    { name: "Illustrator", mark: "Ai", icon: "assets/icons/illustrator.svg" },
-    { name: "Figma", mark: "Fg", icon: "assets/icons/figma.svg" },
-    { name: "Claude", mark: "Cl", icon: "assets/icons/claude.svg" },
-    { name: "ChatGPT", mark: "Gp", icon: "assets/icons/chatgpt.svg" },
-    { name: "Midjourney", mark: "Mj", icon: "assets/icons/midjourney.svg" },
-    { name: "Kling", mark: "Kl", icon: "assets/icons/kling.svg" }
+    { name: "After Effects", mark: "Ae", icon: "" },
+    { name: "Premiere Pro", mark: "Pr", icon: "" },
+    { name: "Photoshop", mark: "Ps", icon: "" },
+    { name: "Illustrator", mark: "Ai", icon: "" },
+    { name: "Figma", mark: "Fg", icon: "assets/icons/figma.webp" },
+    { name: "Claude", mark: "Cl", icon: "" },
+    { name: "ChatGPT", mark: "Gp", icon: "assets/icons/chatgpt.webp" },
+    { name: "Midjourney", mark: "Mj", icon: "assets/icons/midjourney.webp" },
+    { name: "Kling", mark: "Kl", icon: "assets/icons/kling.webp" }
   ],
 
   categories: [

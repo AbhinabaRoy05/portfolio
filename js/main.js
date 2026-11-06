@@ -38,11 +38,10 @@
     if (!ul) return;
     ul.innerHTML = data.tools.map(t => `
       <li class="tool">
-        <span class="tool-ico${t.icon ? " has-img" : ""}" aria-hidden="true">${t.icon ? `<img src="${esc(t.icon)}" alt="" data-mark="${esc(t.mark)}">` : esc(t.mark)}</span>
+        <span class="tool-ico${t.icon ? " has-img" : ""}" aria-hidden="true">${t.icon ? `<img src="${esc(t.icon)}" alt="" width="40" height="40" decoding="async" data-mark="${esc(t.mark)}">` : esc(t.mark)}</span>
         <span class="tool-name">${esc(t.name)}</span>
       </li>`).join("");
     $$("img[data-mark]", ul).forEach(img => img.addEventListener("error", () => {
-      if (/\.svg$/i.test(img.src)) { img.src = img.src.replace(/\.svg$/i, ".png"); return; }
       const box = img.parentNode;
       box.classList.remove("has-img");
       box.textContent = img.dataset.mark;
@@ -270,11 +269,19 @@
     }));
     mobile.addEventListener("change", () => { if (!mobile.matches) setMenu(false); });
 
-    const onScroll = () => hdr.classList.toggle("scrolled", window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-
     const sections = $$("[data-section]");
+    // One scroll handler, run at most once per frame.
+    let ticking = false;
+    window.addEventListener("scroll", () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        hdr.classList.toggle("scrolled", window.scrollY > 40);
+        spy();
+      });
+    }, { passive: true });
+    hdr.classList.toggle("scrolled", window.scrollY > 40);
     const spy = () => {
       const mid = window.innerHeight * 0.4;
       let id = "home";
@@ -282,7 +289,6 @@
       if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) id = sections[sections.length - 1].id;
       if (!$(`.nav a.is-active[data-nav="${id}"]`)) setActive(id);
     };
-    window.addEventListener("scroll", spy, { passive: true });
     window.addEventListener("resize", moveIndicator);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveIndicator);
     spy();
@@ -313,13 +319,16 @@
       cur.classList.toggle("is-hover", !!t);
     }, { passive: true });
     document.addEventListener("pointerleave", () => { cur.classList.add("is-out"); shown = false; });
+    // Animate only while the dot is catching up to the pointer; sleep when it has arrived.
+    let raf = 0;
     const loop = () => {
       rx += (x - rx) * 0.35;
       ry += (y - ry) * 0.35;
+      if (Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1) { rx = x; ry = y; raf = 0; }
+      else raf = requestAnimationFrame(loop);
       dot.style.transform = `translate(${rx}px, ${ry}px)`;
-      requestAnimationFrame(loop);
     };
-    loop();
+    window.addEventListener("pointermove", () => { if (!raf) raf = requestAnimationFrame(loop); }, { passive: true });
 
     const target = $("#target");
     const hero = $("#home");
@@ -346,13 +355,18 @@
     tick();
     setInterval(tick, 1000);
     if (tc && !reduced) {
+      // Only tick the REC timecode while the portrait is on screen.
+      let raf = 0, on = true;
       const loop = () => {
         const ms = performance.now() - start;
         const f = Math.floor(ms / (1000 / 25)) % 25;
         const s = Math.floor(ms / 1000);
         tc.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f)}`;
-        requestAnimationFrame(loop);
+        raf = on ? requestAnimationFrame(loop) : 0;
       };
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(([en]) => { on = en.isIntersecting; if (on && !raf) loop(); }).observe(tc);
+      }
       loop();
     }
   }
@@ -468,7 +482,7 @@
     const overlaps = c => clips.some(o => o !== c && o.track === c.track && c.s < o.s + o.d - 0.001 && o.s < c.s + c.d - 0.001);
     const snap = v => Math.round(v * FPS) / FPS;
 
-    let t = 0, playing = false, last = 0;
+    let t = 0, playing = false, last = 0, raf = 0, visible = true;
     const head = $("#tl-head"), now = $("#tl-now");
     const tc = v => {
       const f = Math.round(v * FPS), s = Math.floor(f / FPS);
@@ -482,18 +496,24 @@
       ruler.setAttribute("aria-valuenow", t.toFixed(2));
       ruler.setAttribute("aria-valuetext", tc(t));
     }
+    // Only draw frames while the timeline is on screen. Time keeps counting while
+    // it's off screen, so the playhead stays in sync with the page-load loop.
+    const run = () => { if (playing && visible && !raf) raf = requestAnimationFrame(tick); };
     function play(on) {
       playing = on;
       root.classList.toggle("is-playing", on);
       $("#tl-play").setAttribute("aria-label", on ? "Pause" : "Play");
-      if (on) { if (t >= LEN) seek(0); last = performance.now(); requestAnimationFrame(tick); }
+      if (on) { last = performance.now(); run(); }
     }
     function tick(ts) {
+      raf = 0;
       if (!playing) return;
-      seek(t + (ts - last) / 1000);
+      seek((t + Math.max(0, ts - last) / 1000) % LEN);
       last = ts;
-      if (t >= LEN) return play(false);
-      requestAnimationFrame(tick);
+      run();
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([en]) => { visible = en.isIntersecting; run(); }).observe(root);
     }
     const edges = () => [...new Set([0, LEN, ...clips.flatMap(c => [c.s, c.s + c.d])])].sort((a, b) => a - b);
     $("#tl-play").addEventListener("click", () => play(!playing));
@@ -508,10 +528,15 @@
     const timeAt = x => { const r = ruler.getBoundingClientRect(); return (x - r.left) / r.width * LEN; };
     function scrub(e) {
       e.preventDefault();
+      const resume = playing;
       play(false);
       seek(snap(timeAt(e.clientX)));
       const move = ev => seek(snap(timeAt(ev.clientX)));
-      const up = () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); };
+      const up = () => {
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+        if (resume) play(true);
+      };
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);
     }
@@ -578,7 +603,8 @@
       place(c);
       el.focus({ preventScroll: true });
     });
-    seek(12 + 18 / FPS);
+    seek(0);
+    if (!reduced) play(true);
   }
 
   renderTools();
