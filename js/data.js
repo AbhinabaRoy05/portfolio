@@ -38,7 +38,7 @@ window.PORTFOLIO = {
       ratio: "9:16",
       layout: "short",
       items: [
-        { title: "Reel 01", description: "Short description.", meta: "Reel · 9:16", video: "", thumb: "" },
+        { title: "HOLYDRIP", description: "Fashion Reel", meta: "YouTube Shorts · 9:16", video: "https://youtube.com/shorts/XHKGWPj9jxc", thumb: "assets/img/thumb-holydrip.jpg" },
         { title: "Reel 02", description: "Short description.", meta: "Reel · 9:16", video: "", thumb: "" },
         { title: "Reel 03", description: "Short description.", meta: "Reel · 9:16", video: "", thumb: "" },
         { title: "Reel 04", description: "Short description.", meta: "Reel · 9:16", video: "", thumb: "" }
