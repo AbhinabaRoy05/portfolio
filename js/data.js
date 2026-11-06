@@ -39,7 +39,7 @@ window.PORTFOLIO = {
       layout: "short",
       items: [
         { title: "HOLYDRIP", description: "Fashion Reel", meta: "YouTube Shorts · 9:16", video: "https://youtube.com/shorts/XHKGWPj9jxc", thumb: "assets/img/thumb-holydrip.jpg" },
-        { title: "Reel 02", description: "Short description.", meta: "Reel · 9:16", video: "", thumb: "" },
+        { title: "PODCAST SHORT", description: "Podcast Clip", meta: "YouTube Shorts · 9:16", video: "https://youtube.com/shorts/lg3QxQwkwJo", thumb: "assets/img/thumb-podcast-short.webp" },
         { title: "Reel 03", description: "Short description.", meta: "Reel · 9:16", video: "", thumb: "" },
         { title: "Reel 04", description: "Short description.", meta: "Reel · 9:16", video: "", thumb: "" }
       ]
