@@ -38,7 +38,7 @@
     if (!ul) return;
     ul.innerHTML = data.tools.map(t => `
       <li class="tool">
-        <span class="tool-ico${t.icon ? " has-img" : ""}" aria-hidden="true">${t.icon ? `<img src="${esc(t.icon)}" alt="" width="40" height="40" decoding="async" data-mark="${esc(t.mark)}">` : esc(t.mark)}</span>
+        <span class="tool-ico${t.icon ? " has-img" : ""}" aria-hidden="true">${t.icon ? `<img src="${esc(t.icon)}" alt="" width="22" height="22" decoding="async" data-mark="${esc(t.mark)}">` : esc(t.mark)}</span>
         <span class="tool-name">${esc(t.name)}</span>
       </li>`).join("");
     $$("img[data-mark]", ul).forEach(img => img.addEventListener("error", () => {

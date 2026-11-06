@@ -463,19 +463,15 @@ main > section { z-index: 1; }
   letter-spacing: -0.01em;
   transition: background-color 0.35s var(--ease), color 0.35s var(--ease), transform 0.35s var(--ease);
 }
-.tool-ico.has-img { border: 0; border-radius: 0; width: 40px; height: 40px; }
+/* Logos sit inside the same white-bordered box as the letter marks (Ae, Pr…). */
 .tool-ico img {
-  width: 100%; height: 100%;
+  width: 22px; height: 22px;
   object-fit: contain;
-  filter: grayscale(1) contrast(1.15) brightness(1.08);
-  -webkit-mask-image: linear-gradient(180deg, #000 25%, rgba(0, 0, 0, 0.38));
-  mask-image: linear-gradient(180deg, #000 25%, rgba(0, 0, 0, 0.38));
   transition: filter 0.35s var(--ease);
 }
 .tool-name { font-size: 12.5px; color: #cfcec9; letter-spacing: 0.01em; white-space: nowrap; }
 .tool:hover .tool-ico { background: var(--paper); color: var(--ink); transform: translateY(-3px); }
-.tool:hover .tool-ico.has-img { background: none; }
-.tool:hover .tool-ico img { -webkit-mask-image: none; mask-image: none; filter: grayscale(1) brightness(1.25); }
+.tool:hover .tool-ico img { filter: invert(1); }
 
 .btn {
   position: relative;
